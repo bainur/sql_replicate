@@ -1,0 +1,33 @@
+<%#= debug @result %>
+<h1>Data for table <%= @table_name%></h1>
+<br/><br/>
+
+<% index = 0 %>
+<% @client.execute("SELECT TOP 10 * from #{@table_name}").each.each do |hash| %>
+    <!-- generate header -->
+
+    <%#= index %>
+    <% if index == 0 %>
+        <div style="overflow:auto;">
+        <table style="width: auto;">
+          <thead>
+          <tr>
+            <% hash.each do |key, value| %>
+                <td><%= key %></td>
+            <% end %>
+          </tr>
+          </thead>
+    <% end %>
+
+
+    <tr>
+      <% hash.each do |key, value| %>
+
+          <td><%= value.blank? ? " " : value  %></td>
+      <% end %>
+    </tr>
+    <% index = index + 1 %>
+<% end %>
+</table>
+</div>
+
