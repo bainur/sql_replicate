@@ -27,13 +27,13 @@ class NcrMapping::ApiResult
               time_stamp = date_of_business.to_time
               store_id = detail["FKStoreID"]
               status = detail["Status"]
-              cashier = detail["FKEmployeeID"].to_s + detail["EmployeeName"].to_s
+              cashier_id_or_name = detail["FKEmployeeID"].to_s + detail["EmployeeName"].to_s
               subtotal = detail["CheckTotal"]
               receipt_number = detail["CheckNumber"]
       hstv = {
           :date_of_business => date_of_business,
           :store_id => store_id, :status => status,
-          :cashier => cashier, :subtotal => subtotal, :receipt_number => receipt_number,
+          :cashier_id_or_name => cashier_id_or_name, :subtotal => subtotal, :receipt_number => receipt_number,
           :time_stamp => time_stamp
       }
       puts hstv
