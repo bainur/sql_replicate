@@ -1,7 +1,7 @@
 class NcrTablesController < ApplicationController
 
   def index
-    a = NcrDatabase.new
+    a = NcrMapping::NcrDatabase.new
     a.connect_database
     @client = a.client
 
@@ -13,7 +13,7 @@ class NcrTablesController < ApplicationController
 
   def show
     @table_name = params[:id]
-    a = NcrDatabase.new
+    a = NcrMapping::NcrDatabase.new
     a.connect_database
     @client = a.client
   end

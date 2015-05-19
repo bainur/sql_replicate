@@ -3,14 +3,12 @@
 <table>
   <thead>
   <tr>
-    <th>No</th>
     <th>Names</th>
   </tr>
   </thead>
   <tbody>
   <% @client.execute("SELECT name FROM sys.tables").each do |rs| %>
       <tr>
-        <td></td>
         <td><%= link_to rs["name"], ncr_table_path(rs["name"]), :target => '_blank' %></td>
       </tr>
   <% end %>
