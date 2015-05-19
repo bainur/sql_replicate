@@ -28,6 +28,7 @@ SqlReplicate::Application.routes.draw do
   namespace :api do
     namespace :v1 do
       match '/ncr_receipt' => 'data#ncr_receipt', :as => :ncr_receipt
+      match '/ncr_reward_transaction' => 'data#ncr_reward_transaction', :as => :ncr_reward_transaction
     end
   end
 

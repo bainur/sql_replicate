@@ -50,4 +50,26 @@ class NcrMapping::ApiResult
     limit = limit_export.blank? ? 10 : limit_export
     return "#{limit}"
   end
+
+  def self.reward_transaction(limit_export = 10)
+    a = NcrMapping::NcrDatabase.new
+    a.connect_database
+    @client = a.client
+    limit_row = limit_initial(limit_export)
+
+    result = @client.execute("select TOP #{limit_row} * from HstvbofqAssignmentReward  INNER JOIN HstvbofqAssignment
+      ON HstvbofqAssignmentID = HstvbofqAssignmentReward.FKHstvbofqAssignmentID where Proposed ='true' AND QueueRewards = 'true'").each
+
+    res = []
+    result.each do |rs|
+      a = @client.execute("select * from vbofqRewardProgramBonusPlan where FKHstvbofqRewardProgramID = #{rs["FKHstvbofqRewardProgramID"]}").each
+      a = a
+      rs.class
+      puts "aaaaaaaaaaaaaaa"
+      puts a
+      res << rs.merge!(a.first)
+    end
+    return res.to_json
+
+    end
 end
