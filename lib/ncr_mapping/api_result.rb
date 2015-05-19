@@ -33,7 +33,8 @@ class NcrMapping::ApiResult
       hstv = {
           :date_of_business => date_of_business,
           :store_id => store_id, :status => status,
-          :cashier => cashier, :subtotal => subtotal, :receipt_number => receipt_number
+          :cashier => cashier, :subtotal => subtotal, :receipt_number => receipt_number,
+          :time_stamp => time_stamp
       }
       puts hstv
       rs.merge!(hstv)
