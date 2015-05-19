@@ -25,6 +25,12 @@ SqlReplicate::Application.routes.draw do
   #     end
   #   end
 
+  namespace :api do
+    namespace :v1 do
+      match '/ncr_receipt' => 'data#ncr_receipt', :as => :ncr_receipt
+    end
+  end
+
   resources :ncr_tables, :only => [:index, :show]
 
   # Sample resource route with sub-resources:
