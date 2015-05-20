@@ -4,7 +4,7 @@ class ApplicationController < ActionController::Base
 
 
   def authenticate
-    if request.host.to_s.include?('localhost') || request.host.to_s.include?('nfrel.herokuapp.com')
+    if request.host.to_s.include?('localhost') || request.host.to_s.include?('herokuapp')
 
     else
       authenticate_or_request_with_http_basic do |username, password|
