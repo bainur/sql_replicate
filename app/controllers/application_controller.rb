@@ -4,8 +4,13 @@ class ApplicationController < ActionController::Base
 
 
   def authenticate
-    authenticate_or_request_with_http_basic do |username, password|
-      username == HTTP_BASIC[:username] && password == HTTP_BASIC[:password]
+    if request.host.to_s.include?('localhost') || request.host.to_s.include?('nfrel.herokuapp.com')
+
+    else
+      authenticate_or_request_with_http_basic do |username, password|
+        username == HTTP_BASIC[:username] && password == HTTP_BASIC[:password]
+        #end
+      end
     end
   end
 end
