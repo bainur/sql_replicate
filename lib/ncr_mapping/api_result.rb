@@ -58,16 +58,19 @@ class NcrMapping::ApiResult
     limit_row = limit_initial(limit_export)
 
     result = @client.execute("select TOP #{limit_row} * from HstvbofqAssignmentReward  INNER JOIN HstvbofqAssignment
-      ON HstvbofqAssignmentID = HstvbofqAssignmentReward.FKHstvbofqAssignmentID where Proposed ='true' AND QueueRewards = 'true'").each
+      ON HstvbofqAssignmentID = HstvbofqAssignmentReward.FKHstvbofqAssignmentID where Proposed = '' AND QueueRewards = 'true'").each
 
     res = []
     result.each do |rs|
-      a = @client.execute("select * from vbofqRewardProgramBonusPlan where FKHstvbofqRewardProgramID = #{rs["FKHstvbofqRewardProgramID"]}").each
+      #a = @client.execute("select * from vbofqRewardProgramBonusPlan where FKHstvbofqRewardProgramID = #{rs["FKHstvbofqRewardProgramID"]}").each
+      #a = @client.execute("select * from HstvbofqAssignment where HstvbofqAssignmentID = #{rs["FKHstvbofqAssignmentID"]}").each
+      a = @client.execute("select * from vbofqMemberAccount inner join HstvbofqAssignment
+                           on HstvbofqAssignment.FKvbofqMemberAccountID = vbofqMemberAccountID
+                           where HstvbofqAssignmentID = #{rs["FKHstvbofqAssignmentID"]}").each
+      # get card number
       a = a
       rs.class
-      puts "aaaaaaaaaaaaaaa"
-      puts a
-      res << rs.merge!(a.first)
+      res << rs.merge!(a[0]).merge!(:bpid => "still not found")
     end
     return res.to_json
 
