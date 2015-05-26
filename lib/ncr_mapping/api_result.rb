@@ -58,19 +58,30 @@ class NcrMapping::ApiResult
     limit_row = limit_initial(limit_export)
 
     result = @client.execute("select TOP #{limit_row} * from HstvbofqAssignmentReward  INNER JOIN HstvbofqAssignment
-      ON HstvbofqAssignmentID = HstvbofqAssignmentReward.FKHstvbofqAssignmentID where Proposed = '' AND QueueRewards = 'true'").each
+      ON HstvbofqAssignmentID = HstvbofqAssignmentReward.FKHstvbofqAssignmentID where Proposed = 'true' AND QueueRewards = 'true'").each
 
     res = []
     result.each do |rs|
+      puts rs
+      puts "--------------------------------------------"
       #a = @client.execute("select * from vbofqRewardProgramBonusPlan where FKHstvbofqRewardProgramID = #{rs["FKHstvbofqRewardProgramID"]}").each
       #a = @client.execute("select * from HstvbofqAssignment where HstvbofqAssignmentID = #{rs["FKHstvbofqAssignmentID"]}").each
       a = @client.execute("select * from vbofqMemberAccount inner join HstvbofqAssignment
                            on HstvbofqAssignment.FKvbofqMemberAccountID = vbofqMemberAccountID
                            where HstvbofqAssignmentID = #{rs["FKHstvbofqAssignmentID"]}").each
+      reward_name = @client.execute("select *  from vbofqRewardProgram
+      INNER JOIN HstvbofqRewardProgram on FKvbofqRewardProgramID = vbofqRewardProgramID
+      INNER JOIN HstvbofqAssignmentReward ON FKHstvbofqRewardProgramID = HstvbofqRewardProgramID
+      WHERE FKHstvbofqAssignmentID = #{rs['FKHstvbofqAssignmentID']} and Proposed = 'true' and QueueRewards = 'true'").each
+      
       # get card number
       a = a
       rs.class
-      res << rs.merge!(a[0]).merge!(:bpid => "still not found")
+
+      #reward_name = reward_name.first['RewardProgramName'] rescue nil
+      #reward_bpid = reward_name.first['vbofqRewardProgramID'] rescue nil
+      reward_name = reward_name
+      res << rs.merge!(a[0]).merge!({:bpid => reward_name.first['vbofqRewardProgramID'], :reward_name => reward_name.first['RewardProgramName']})
     end
     return res.to_json
 
