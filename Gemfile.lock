@@ -81,6 +81,9 @@ GEM
     rake (10.4.2)
     rdoc (3.12.2)
       json (~> 1.4)
+    rest-client (1.6.8)
+      mime-types (~> 1.16)
+      rdoc (>= 2.4.2)
     sass (3.4.13)
     sass-rails (3.2.6)
       railties (~> 3.2.0)
@@ -110,6 +113,7 @@ DEPENDENCIES
   jquery-rails
   pg
   rails (= 3.2.0)
+  rest-client
   sass-rails (~> 3.2.3)
   tiny_tds (= 0.6.2)
   uglifier (>= 1.0.3)

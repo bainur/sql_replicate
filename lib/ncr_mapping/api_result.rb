@@ -34,10 +34,17 @@ class NcrMapping::ApiResult
           :date_of_business => date_of_business,
           :store_id => store_id, :status => status,
           :cashier_id_or_name => cashier_id_or_name, :subtotal => subtotal, :receipt_number => receipt_number,
-          :time_stamp => time_stamp
+          :time_stamp => time_stamp, :check_id => (detail["HstvbofqCheckID"] rescue nil)
       }
       puts hstv
-      rs.merge!(hstv)
+              puts detail["HstvbofqCheckItemID"]
+              items = @client.execute("select HstvbofqCheckItem.*, Item.ShortName, Item.LongName, Item.Price from HstvbofqCheckItem
+                inner join Item on Item.ItemId = HstvbofqCheckItem.ItemID
+                where
+                FKHstvbofqCheckID = #{detail["HstvbofqCheckID"]}").each
+              puts items.class
+              puts items
+      rs.merge!(hstv).merge!(:items => items)
       end
 
       res << rs.merge!(a)

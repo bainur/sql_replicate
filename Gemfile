@@ -19,7 +19,7 @@ group :assets do
 
   gem 'uglifier', '>= 1.0.3'
 end
-
+gem 'rest-client'
 gem 'jquery-rails'
 gem 'tiny_tds', '0.6.2'
 
