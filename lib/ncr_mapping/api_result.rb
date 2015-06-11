@@ -16,8 +16,12 @@ class NcrMapping::ApiResult
       assingnment_id = rs["HstvbofqAssignmentID"]
 
       card_numbers = @client.execute("select CardNumber from vbofqMemberAccount where vbofqMemberAccountID = #{user_id}").each
+
+      points_holder = @client.execute("select FKvbofqRewardProgramID,CommittedMerit from vbofqRewardProgramStandings where FKvbofqMemberAccountID = #{user_id}
+").each
+
       a = {}
-      a = {:card_number => card_numbers.first["CardNumber"]} unless card_numbers.blank?
+      a = {:card_number => card_numbers.first["CardNumber"], :points_holder => points_holder} unless card_numbers.blank?
 
       ## transaction detail
 
