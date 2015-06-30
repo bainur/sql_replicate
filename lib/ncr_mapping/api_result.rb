@@ -1,14 +1,23 @@
 class NcrMapping::ApiResult
 
   #NcrMapping::ApiResult.ncr_receipt
-  def self.ncr_receipt(limit_export = 1000)
+  def self.ncr_receipt(limit_export = 1000, individual_card = nil)
     a = NcrMapping::NcrDatabase.new
     a.connect_database
     @client = a.client
     limit_row = limit_initial(limit_export)
     puts @client
     puts "select TOP #{limit_row} * from HstvbofqAssignment where FKStoreID is not null Order by HstvbofqAssignmentID desc"
-    results = @client.execute("select TOP #{limit_row} * from HstvbofqAssignment where FKStoreID is not null AND FKStoreID !=0 Order by ActivityDateTime desc").each # do |rs|
+
+    conditions = nil
+    unless individual_card.blank?
+      x = @client.execute("select vbofqMemberAccountID from vbofqMemberAccount where CardNumber = #{individual_card}").each
+      member_account_id = x.first["vbofqMemberAccountID"]
+      conditions = " AND FKvbofqMemberAccountID = #{member_account_id}"
+    end
+    results = @client.execute("select TOP #{limit_row} * from HstvbofqAssignment where FKStoreID is not null AND FKStoreID !=0
+              #{conditions}
+            Order by ActivityDateTime desc").each # do |rs|
 
     res = []
     results.each do |rs|
