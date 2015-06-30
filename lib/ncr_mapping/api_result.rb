@@ -22,7 +22,7 @@ class NcrMapping::ApiResult
 ").each
 
       a = {}
-      a = {:card_number => card_numbers.first["CardNumber"], :points_holder => points_holder, :merit_amount => merit_amount['Balance'] } unless card_numbers.blank?
+      a = {:card_number => card_numbers.first["CardNumber"], :points_holder => points_holder, :merit_amount => merit_amount } unless card_numbers.blank?
 
       ## transaction detail
 
