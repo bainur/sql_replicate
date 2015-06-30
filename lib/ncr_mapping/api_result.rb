@@ -14,7 +14,7 @@ class NcrMapping::ApiResult
     results.each do |rs|
       user_id = rs["FKvbofqMemberAccountID"] # this is user id from ncr
       assingnment_id = rs["HstvbofqAssignmentID"]
-      merit_amount = @client.execute("select MeritAmount from HstvbofqAssignmentMerit where FKHstvbofqAssignmentID = #{assingnment_id}").each
+      merit_amount = @client.execute("select Balance from HstvbofqAdjustment where FKHstvbofqAssignmentID = #{assingnment_id}").each
 
       card_numbers = @client.execute("select CardNumber from vbofqMemberAccount where vbofqMemberAccountID = #{user_id}").each
 
