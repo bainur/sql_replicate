@@ -23,7 +23,10 @@ class NcrMapping::ApiResult
     results.each do |rs|
       user_id = rs["FKvbofqMemberAccountID"] # this is user id from ncr
       assingnment_id = rs["HstvbofqAssignmentID"]
-      merit_amount = @client.execute("select Balance from HstvbofqAdjustment where FKHstvbofqAssignmentID = #{assingnment_id}").each
+      merit_amount = @client.execute("select MeritAmount from HstvbofqAssignmentMerit where FKHstvbofqAssignmentID = #{assingnment_id}").each
+
+
+      balance = @client.execute("select Balance from HstvbofqAdjustment where FKHstvbofqAssignmentID = #{assingnment_id}").each
 
       card_numbers = @client.execute("select CardNumber from vbofqMemberAccount where vbofqMemberAccountID = #{user_id}").each
 
@@ -31,7 +34,9 @@ class NcrMapping::ApiResult
 ").each
 
       a = {}
-      a = {:card_number => card_numbers.first["CardNumber"], :points_holder => points_holder, :merit_amount => (merit_amount.first["Balance"] rescue 0) } unless card_numbers.blank?
+      a = {:card_number => card_numbers.first["CardNumber"], :points_holder => points_holder,
+           :merit_amount => (merit_amount.first["MeritAmount"] rescue 0),
+           :balance => (balance.first['Balance'] rescue 0)} unless card_numbers.blank?
 
       ## transaction detail
 
