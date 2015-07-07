@@ -15,7 +15,7 @@ class NcrMapping::ApiResult
       member_account_id = x.first["vbofqMemberAccountID"]
       conditions = " AND FKvbofqMemberAccountID = #{member_account_id}"
     end
-    results = @client.execute("select TOP #{limit_row} * from HstvbofqAssignment where FKStoreID is not null AND FKStoreID !=0
+    results = @client.execute("select TOP #{limit_row} * from HstvbofqAssignment where FKStoreID is not null AND FKStoreID !=0 AND Status = 4 
               #{conditions}
             Order by ActivityDateTime desc").each # do |rs|
 
@@ -30,8 +30,8 @@ class NcrMapping::ApiResult
 
       card_numbers = @client.execute("select CardNumber from vbofqMemberAccount where vbofqMemberAccountID = #{user_id}").each
 
-      points_holder = @client.execute("select FKvbofqRewardProgramID,CommittedMerit from vbofqRewardProgramStandings where FKvbofqMemberAccountID = #{user_id}
-").each
+      points_holder = []#@client.execute("select FKvbofqRewardProgramID,CommittedMerit from vbofqRewardProgramStandings where FKvbofqMemberAccountID = #{user_id}
+#").each
 
       a = {}
       a = {:card_number => card_numbers.first["CardNumber"], :points_holder => points_holder,
