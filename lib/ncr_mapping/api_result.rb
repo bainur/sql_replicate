@@ -15,7 +15,7 @@ class NcrMapping::ApiResult
       member_account_id = x.first["vbofqMemberAccountID"]
       conditions = " AND FKvbofqMemberAccountID = #{member_account_id}"
     end
-    results = @client.execute("select TOP #{limit_row} * from HstvbofqAssignment where FKStoreID is not null AND FKStoreID !=0 AND Status = 4 
+    results = @client.execute("select TOP #{limit_row} * from HstvbofqAssignment where FKStoreID is not null AND FKStoreID !=0
               #{conditions}
             Order by ActivityDateTime desc").each # do |rs|
 
