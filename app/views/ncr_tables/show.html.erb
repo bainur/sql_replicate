@@ -2,8 +2,10 @@
 <h1>Data for table <%= @table_name%></h1>
 <br/><br/>
 
+<% limit = 10 %>
+<% limit = params['row'].to_i unless params['row'].blank?%>
 <% index = 0 %>
-<% @client.execute("SELECT TOP 10 * from #{@table_name}").each.each do |hash| %>
+<% @client.execute("SELECT TOP #{limit} * from #{@table_name}").each.each do |hash| %>
     <!-- generate header -->
 
     <%#= index %>
