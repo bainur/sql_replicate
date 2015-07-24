@@ -114,10 +114,12 @@ class NcrMapping::ApiResult
       INNER JOIN HstvbofqAssignmentReward ON FKHstvbofqRewardProgramID = HstvbofqRewardProgramID
       WHERE FKHstvbofqAssignmentID = #{rs['FKHstvbofqAssignmentID']} and Proposed = 'true' and QueueRewards = 'true'").each
 
-      b = @client.execute(" select * from vbofqRewardProgramTier
- inner join vbofqRewardProgram on FKHstvbofqRewardProgramID = vbofqRewardProgramID
-where FKvbofqTierID = #{rs['TierID']} and FKHstvbofqRewardProgramID = #{rs['FKHstvbofqRewardProgramID']} ").each
-      #b = @client.execute(" select * from vbofqRewardProgramStandings  where FKTierID = #{rs['TierID']} ").each
+#       b = @client.execute(" select * from vbofqRewardProgramTier
+#  inner join vbofqRewardProgram on FKHstvbofqRewardProgramID = vbofqRewardProgramID
+# where FKvbofqTierID = #{rs['TierID']} and FKHstvbofqRewardProgramID = #{rs['FKHstvbofqRewardProgramID']} ").each
+      b = @client.execute(" select * from vbofqRewardProgramBonusPlan
+      inner join vbofqBonusPlan on vbofqBonusPlanID = FKvbofqBonusPlanID
+      where FKHstvbofqRewardProgramID =  #{rs['FKHstvbofqRewardProgramID']} ").each
 
       # get card number
       a = a
@@ -126,7 +128,7 @@ where FKvbofqTierID = #{rs['TierID']} and FKHstvbofqRewardProgramID = #{rs['FKHs
       #reward_name = reward_name.first['RewardProgramName'] rescue nil
       #reward_bpid = reward_name.first['vbofqRewardProgramID'] rescue nil
       reward_name = reward_name
-      res << rs.merge!(a[0]).merge!({:bpid => reward_name.first['vbofqRewardProgramID'], :reward_name => reward_name.first['RewardProgramName']})
+      res << rs.merge!(a[0]).merge!({:bpid => reward_name.first['vbofqRewardProgramID'], :reward_name => reward_name.first['RewardProgramName'], :vbofqBonusPlan => b})
     end
     return res.first.to_json  unless params['assignment_id'].blank?
     return res.to_json
