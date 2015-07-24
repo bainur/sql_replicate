@@ -85,10 +85,10 @@ class NcrMapping::ApiResult
 
     conditions = []
     conditions << " FKHstvbofqAssignmentID  =  #{params['assignment_id']}" unless params['assignment_id'].blank?
-    conditions << " Event  =  1 " unless params['assignment_id'].blank?
+   # conditions << " Event  =  1 " unless params['assignment_id'].blank?
     conditions << " CheckNumber  =  #{params['check_number']}" unless params['check_number'].blank?
     conditions = conditions.join(" AND ")
-    conditions = " AND " + conditions if !conditions.include?("AND") and conditions.present?
+    conditions =  conditions if !conditions.include?("AND") and conditions.present?
 
     q = ["select TOP #{limit_row} * from HstvbofqAssignmentReward  INNER JOIN HstvbofqAssignment
       ON HstvbofqAssignmentID = HstvbofqAssignmentReward.FKHstvbofqAssignmentID where Proposed = 'true' AND QueueRewards = 'true'"]
@@ -113,7 +113,12 @@ class NcrMapping::ApiResult
       INNER JOIN HstvbofqRewardProgram on FKvbofqRewardProgramID = vbofqRewardProgramID
       INNER JOIN HstvbofqAssignmentReward ON FKHstvbofqRewardProgramID = HstvbofqRewardProgramID
       WHERE FKHstvbofqAssignmentID = #{rs['FKHstvbofqAssignmentID']} and Proposed = 'true' and QueueRewards = 'true'").each
-      
+
+      b = @client.execute(" select * from vbofqRewardProgramTier
+ inner join vbofqRewardProgram on FKHstvbofqRewardProgramID = vbofqRewardProgramID
+where FKvbofqTierID = #{rs['TierID']} and FKHstvbofqRewardProgramID = #{rs['FKHstvbofqRewardProgramID']} ").each
+      #b = @client.execute(" select * from vbofqRewardProgramStandings  where FKTierID = #{rs['TierID']} ").each
+
       # get card number
       a = a
       rs.class
