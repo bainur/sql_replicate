@@ -87,7 +87,7 @@ class NcrMapping::ApiResult
     conditions << " FKHstvbofqAssignmentID  =  #{params['assignment_id']}" unless params['assignment_id'].blank?
     conditions << " CheckNumber  =  #{params['check_number']}" unless params['check_number'].blank?
     conditions = conditions.join(" AND ")
-    conditions = " AND " + conditions if !conditions.include?("AND")
+    conditions = " AND " + conditions if !conditions.include?("AND") and conditions.present?
 
     q = "select TOP #{limit_row} * from HstvbofqAssignmentReward  INNER JOIN HstvbofqAssignment
       ON HstvbofqAssignmentID = HstvbofqAssignmentReward.FKHstvbofqAssignmentID where Proposed = 'true' AND QueueRewards = 'true' #{conditions}"
