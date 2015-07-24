@@ -107,7 +107,7 @@ class NcrMapping::ApiResult
       #reward_name = reward_name.first['RewardProgramName'] rescue nil
       #reward_bpid = reward_name.first['vbofqRewardProgramID'] rescue nil
       reward_name = reward_name
-      res << rs.merge!(a[0]).merge!({:bpid => reward_name.first['vbofqRewardProgramID'], :reward_name => reward_name.first['RewardProgramName']})
+      res << rs.merge!(a[0]).merge!({:bpid => reward_name.first['vbofqRewardProgramID'], :reward_name => reward_name})
     end
     return res.to_json
 
