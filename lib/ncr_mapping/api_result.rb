@@ -77,7 +77,7 @@ class NcrMapping::ApiResult
     return "#{limit}"
   end
 
-  def self.reward_transaction(limit_export = 1000)
+  def self.reward_transaction(limit_export = 1000, params)
     a = NcrMapping::NcrDatabase.new
     a.connect_database
     @client = a.client
