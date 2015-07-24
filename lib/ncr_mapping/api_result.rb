@@ -87,13 +87,16 @@ class NcrMapping::ApiResult
     conditions << " FKHstvbofqAssignmentID  =  #{params['assignment_id']}" unless params['assignment_id'].blank?
     conditions << " CheckNumber  =  #{params['check_number']}" unless params['check_number'].blank?
     conditions = conditions.join(" AND ")
+    conditions = " AND " + conditions if !conditions.include?("AND")
 
-    result = @client.execute("select TOP #{limit_row} * from HstvbofqAssignmentReward  INNER JOIN HstvbofqAssignment
-      ON HstvbofqAssignmentID = HstvbofqAssignmentReward.FKHstvbofqAssignmentID where Proposed = 'true' AND QueueRewards = 'true' #{conditions}").each
+    q = "select TOP #{limit_row} * from HstvbofqAssignmentReward  INNER JOIN HstvbofqAssignment
+      ON HstvbofqAssignmentID = HstvbofqAssignmentReward.FKHstvbofqAssignmentID where Proposed = 'true' AND QueueRewards = 'true' #{conditions}"
+    puts q
+    result = @client.execute(q).each
 
 
     res = []
-    result.each do |rs|
+    result.uniq.each do |rs|
       puts rs
       puts "--------------------------------------------"
       #a = @client.execute("select * from vbofqRewardProgramBonusPlan where FKHstvbofqRewardProgramID = #{rs["FKHstvbofqRewardProgramID"]}").each
