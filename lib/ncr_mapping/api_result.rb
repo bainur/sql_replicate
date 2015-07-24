@@ -128,6 +128,7 @@ where FKvbofqTierID = #{rs['TierID']} and FKHstvbofqRewardProgramID = #{rs['FKHs
       reward_name = reward_name
       res << rs.merge!(a[0]).merge!({:bpid => reward_name.first['vbofqRewardProgramID'], :reward_name => reward_name.first['RewardProgramName']})
     end
+    return res.first.to_json  unless params['assignment_id'].blank?
     return res.to_json
 
     end
