@@ -133,5 +133,16 @@ class NcrMapping::ApiResult
     return res.first.to_json  unless params['assignment_id'].blank?
     return res.to_json
 
-    end
+  end
+
+  def self.get_points(card_number, bpid)
+    a = NcrMapping::NcrDatabase.new
+    a.connect_database
+    @client = a.client
+    x = @client.execute("select vbofqMemberAccountID from vbofqMemberAccount where CardNumber = #{card_number}").each
+
+    m = @client.execute("select * from vbofqRewardProgramStandings where FKvbofqMemberAccountID = #{x.first['vbofqMemberAccountID']} AND
+FKvbofqRewardProgramID  = #{bpid}").each
+    return m
+  end
 end
