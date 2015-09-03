@@ -90,6 +90,7 @@ class NcrMapping::ApiResult
     conditions = conditions.join(" AND ")
     conditions =  conditions if !conditions.include?("AND") and conditions.present?
 
+    puts "a"
     q = ["select TOP #{limit_row} * from HstvbofqAssignmentReward  INNER JOIN HstvbofqAssignment
       ON HstvbofqAssignmentID = HstvbofqAssignmentReward.FKHstvbofqAssignmentID where Proposed = 'true' AND QueueRewards = 'true'"]
     q << conditions unless conditions.blank?
