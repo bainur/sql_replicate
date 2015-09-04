@@ -68,7 +68,7 @@ class NcrMapping::ApiResult
 
       res << rs.merge!(a)
     end
-    res << "#{Time.now - time_execute}"
+    #res << "#{Time.now - time_execute}"
     return res.to_json
   end
 
