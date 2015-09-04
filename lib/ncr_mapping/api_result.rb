@@ -8,7 +8,7 @@ class NcrMapping::ApiResult
     limit_row = limit_initial(limit_export)
     puts @client
     puts "select TOP #{limit_row} * from HstvbofqAssignment where FKStoreID is not null Order by HstvbofqAssignmentID desc"
-
+    time_execute = Time.now
     conditions = nil
     unless individual_card.blank?
       x = @client.execute("select vbofqMemberAccountID from vbofqMemberAccount where CardNumber = #{individual_card}").each
@@ -66,7 +66,7 @@ class NcrMapping::ApiResult
       rs.merge!(hstv).merge!(:items => items)
       end
 
-      res << rs.merge!(a)
+      res << rs.merge!(a).merge!(:time_load => (Time.now - time_execute))
     end
 
     return res.to_json
