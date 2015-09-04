@@ -68,8 +68,8 @@ class NcrMapping::ApiResult
 
       res << rs.merge!(a)
     end
-
-    return res.to_json.merge!(:time_load => (Time.now - time_execute))
+    res << "#{Time.now - time_execute)}"
+    return res.to_json
   end
 
   def self.limit_initial(limit_export)
