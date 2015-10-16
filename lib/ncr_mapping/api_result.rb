@@ -82,6 +82,7 @@ class NcrMapping::ApiResult
     a.connect_database
     @client = a.client
     limit_row = limit_initial(limit_export)
+    card_number = params["card_number"] unless params["card_number"].blank?
     conditions = []
     ## for individual card number
     unless params["card_number"].blank?
@@ -140,7 +141,7 @@ HstvbofqAssignment.Status = 4 AND RewardAmount <> 0
       #reward_bpid = reward_name.first['vbofqRewardProgramID'] rescue nil
       reward_name = reward_name
       #res << rs.merge!({:bpid => b.first['FKvbofqBonusPlanID'], :reward_name => b.first['BonusPlanName'], :vbofqBonusPlan => b})
-      res << rs.merge!({:bpid => b.first['FKvbofqBonusPlanID'], :bonus_plan_name => b.first['BonusPlanName']})
+      res << rs.merge!({:bpid => b.first['FKvbofqBonusPlanID'], :bonus_plan_name => b.first['BonusPlanName']}).merge!(:cardNumber => card_number)
     end
     return res.first.to_json  unless params['assignment_id'].blank?
     return res.to_json
