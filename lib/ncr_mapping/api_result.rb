@@ -82,17 +82,27 @@ class NcrMapping::ApiResult
     a.connect_database
     @client = a.client
     limit_row = limit_initial(limit_export)
-
     conditions = []
+    ## for individual card number
+    unless params["card_number"].blank?
+      member_account_id = @client.execute("select vbofqMemberAccountID from vbofqMemberAccount where CardNumber = #{params["card_number"]}").each
+      member_account_id = member_account_id.first["vbofqMemberAccountID"]
+
+      conditions << " HstvbofqAssignment.FKvbofqMemberAccountID = #{member_account_id}"
+    end
+
+
     conditions << " FKHstvbofqAssignmentID  =  #{params['assignment_id']}" unless params['assignment_id'].blank?
    # conditions << " Event  =  1 " unless params['assignment_id'].blank?
     conditions << " CheckNumber  =  #{params['check_number']}" unless params['check_number'].blank?
     conditions = conditions.join(" AND ")
     conditions =  conditions if !conditions.include?("AND") and conditions.present?
-
+    limit_row = 10
     puts "a"
     q = ["select TOP #{limit_row} * from HstvbofqAssignmentReward  INNER JOIN HstvbofqAssignment
-      ON HstvbofqAssignmentID = HstvbofqAssignmentReward.FKHstvbofqAssignmentID where Proposed = 'true' AND QueueRewards = 'true'"]
+      ON HstvbofqAssignmentID = HstvbofqAssignmentReward.FKHstvbofqAssignmentID where Proposed = 'true' AND
+HstvbofqAssignment.Status = 4 AND RewardAmount <> 0
+    "]
     q << conditions unless conditions.blank?
     q = q.join(" AND ") #unless conditions.blank?
 
@@ -107,13 +117,13 @@ class NcrMapping::ApiResult
       puts "--------------------------------------------"
       #a = @client.execute("select * from vbofqRewardProgramBonusPlan where FKHstvbofqRewardProgramID = #{rs["FKHstvbofqRewardProgramID"]}").each
       #a = @client.execute("select * from HstvbofqAssignment where HstvbofqAssignmentID = #{rs["FKHstvbofqAssignmentID"]}").each
-      a = @client.execute("select * from vbofqMemberAccount inner join HstvbofqAssignment
-                           on HstvbofqAssignment.FKvbofqMemberAccountID = vbofqMemberAccountID
-                           where HstvbofqAssignmentID = #{rs["FKHstvbofqAssignmentID"]}").each
-      reward_name = @client.execute("select *  from vbofqRewardProgram
-      INNER JOIN HstvbofqRewardProgram on FKvbofqRewardProgramID = vbofqRewardProgramID
-      INNER JOIN HstvbofqAssignmentReward ON FKHstvbofqRewardProgramID = HstvbofqRewardProgramID
-      WHERE FKHstvbofqAssignmentID = #{rs['FKHstvbofqAssignmentID']} and Proposed = 'true' and QueueRewards = 'true'").each
+      # a = @client.execute("select * from vbofqMemberAccount inner join HstvbofqAssignment
+      #                      on HstvbofqAssignment.FKvbofqMemberAccountID = vbofqMemberAccountID
+      #                      where HstvbofqAssignmentID = #{rs["FKHstvbofqAssignmentID"]}").each
+      # reward_name = @client.execute("select *  from vbofqRewardProgram
+      # INNER JOIN HstvbofqRewardProgram on FKvbofqRewardProgramID = vbofqRewardProgramID
+      # INNER JOIN HstvbofqAssignmentReward ON FKHstvbofqRewardProgramID = HstvbofqRewardProgramID
+      # WHERE FKHstvbofqAssignmentID = #{rs['FKHstvbofqAssignmentID']} and Proposed = 'true' and QueueRewards = 'true'").each
 
 #       b = @client.execute(" select * from vbofqRewardProgramTier
 #  inner join vbofqRewardProgram on FKHstvbofqRewardProgramID = vbofqRewardProgramID
@@ -123,13 +133,14 @@ class NcrMapping::ApiResult
       where FKHstvbofqRewardProgramID =  #{rs['FKHstvbofqRewardProgramID']} ").each
 
       # get card number
-      a = a
-      rs.class
+      # a = a
+      # rs.class
 
       #reward_name = reward_name.first['RewardProgramName'] rescue nil
       #reward_bpid = reward_name.first['vbofqRewardProgramID'] rescue nil
       reward_name = reward_name
-      res << rs.merge!(a[0]).merge!({:bpid => reward_name.first['vbofqRewardProgramID'], :reward_name => reward_name.first['RewardProgramName'], :vbofqBonusPlan => b})
+      #res << rs.merge!({:bpid => b.first['FKvbofqBonusPlanID'], :reward_name => b.first['BonusPlanName'], :vbofqBonusPlan => b})
+      res << rs.merge!({:bpid => b.first['FKvbofqBonusPlanID'], :bonus_plan_name => b.first['BonusPlanName']})
     end
     return res.first.to_json  unless params['assignment_id'].blank?
     return res.to_json
