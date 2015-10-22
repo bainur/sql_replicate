@@ -141,7 +141,8 @@ HstvbofqAssignment.Status = 4 AND RewardAmount <> 0
       #reward_bpid = reward_name.first['vbofqRewardProgramID'] rescue nil
       reward_name = reward_name
       #res << rs.merge!({:bpid => b.first['FKvbofqBonusPlanID'], :reward_name => b.first['BonusPlanName'], :vbofqBonusPlan => b})
-      res << rs.merge!({:bpid => b.first['FKvbofqBonusPlanID'], :bonus_plan_name => b.first['BonusPlanName']}).merge!(:cardNumber => card_number)
+      res << rs.merge!({:bpid => b.first['FKvbofqBonusPlanID'],
+                        :reward_name => b.first['BonusPlanName']}).merge!(:cardNumber => card_number)
     end
     return res.first.to_json  unless params['assignment_id'].blank?
     return res.to_json
