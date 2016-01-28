@@ -22,6 +22,7 @@ end
 gem 'rest-client'
 gem 'jquery-rails'
 gem 'tiny_tds', '0.6.2'
+gem "spreadsheet"
 
 gem 'activerecord-sqlserver-adapter', '3.2.0'
 
