@@ -40,11 +40,11 @@ class NcrMapping::ApiResult
 
       ## transaction detail
 
-      @client.execute("select * from HstvbofqCheck where FKHstvbofqAssignmentID
-             = #{assingnment_id}").each do |detail|
+      @client.execute("select * from HstvbofqCheck inner join gblStore on FKStoreID = StoreId where FKHstvbofqAssignmentID
+             = #{assingnment_id} ").each do |detail|
               date_of_business = detail["DateOfBusiness"]
               time_stamp = date_of_business.to_time
-              store_id = detail["FKStoreID"]
+              store_id =  detail['SecondaryStoreID']
               status = detail["Status"]
               cashier_id_or_name = detail["FKEmployeeID"].to_s + detail["EmployeeName"].to_s
               subtotal = detail["CheckTotal"]
