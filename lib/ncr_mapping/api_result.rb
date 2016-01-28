@@ -51,7 +51,7 @@ class NcrMapping::ApiResult
               receipt_number = detail["CheckNumber"]
       hstv = {
           :date_of_business => date_of_business,
-          :store_id => store_id, :status => status,
+          :store_id => store_id, :status => status,:xls_store_id => NcrMapping::ReadXls.external_id(detail['SecondaryStoreID'].to_i).to_i,
           :cashier_id_or_name => cashier_id_or_name, :subtotal => subtotal, :receipt_number => receipt_number,
           :time_stamp => time_stamp, :check_id => (detail["HstvbofqCheckID"] rescue nil)
       }
