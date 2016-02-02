@@ -52,6 +52,7 @@ class NcrMapping::ApiResult
       hstv = {
           :date_of_business => date_of_business,
           :store_id => store_id, :status => status,
+          :store_id_or_external_id => store_id,
           :cashier_id_or_name => cashier_id_or_name, :subtotal => subtotal, :receipt_number => receipt_number,
           :time_stamp => time_stamp, :check_id => (detail["HstvbofqCheckID"] rescue nil)
       }
