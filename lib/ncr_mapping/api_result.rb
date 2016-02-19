@@ -12,12 +12,17 @@ class NcrMapping::ApiResult
     conditions = nil
     unless individual_card.blank?
       x = @client.execute("select vbofqMemberAccountID from vbofqMemberAccount where CardNumber = #{individual_card}").each
-      member_account_id = x.first["vbofqMemberAccountID"]
+      member_account_id = x.first["vbofqMemberAccountID"] rescue nil
+      return [] if member_account_id.blank?
       conditions = " AND FKvbofqMemberAccountID = #{member_account_id}"
     end
 
     unless date_receipt.blank?
+      unless conditions.blank?
       conditions += " AND CONVERT(date,ActivityDateTime) = '#{date_receipt}'"
+      else
+        conditions = " AND CONVERT(date,ActivityDateTime) = '#{date_receipt}'"
+        end
     end
 
     results = @client.execute("select TOP #{limit_row} * from HstvbofqAssignment where FKStoreID is not null AND FKStoreID !=0
