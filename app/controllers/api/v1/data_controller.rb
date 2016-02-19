@@ -7,7 +7,8 @@ class Api::V1::DataController < ApplicationController
   def ncr_receipt
     row = params[:row].blank? ? 10 : params[:row].to_i
     card_number = params["card_number"]
-    result = NcrMapping::ApiResult.ncr_receipt(row,card_number)
+    date_receipt = params["date"]
+    result = NcrMapping::ApiResult.ncr_receipt(row,card_number,date_receipt)
 
     render :json => result
   end

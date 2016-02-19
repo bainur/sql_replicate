@@ -1,7 +1,7 @@
 class NcrMapping::ApiResult
 
   #NcrMapping::ApiResult.ncr_receipt
-  def self.ncr_receipt(limit_export = 1000, individual_card = nil)
+  def self.ncr_receipt(limit_export = 1000, individual_card = nil, date_receipt = nil)
     a = NcrMapping::NcrDatabase.new
     a.connect_database
     @client = a.client
@@ -15,6 +15,11 @@ class NcrMapping::ApiResult
       member_account_id = x.first["vbofqMemberAccountID"]
       conditions = " AND FKvbofqMemberAccountID = #{member_account_id}"
     end
+
+    unless date_receipt.blank?
+      conditions += " AND CONVERT(date,ActivityDateTime) = '#{date_receipt}'"
+    end
+
     results = @client.execute("select TOP #{limit_row} * from HstvbofqAssignment where FKStoreID is not null AND FKStoreID !=0
               #{conditions}
             Order by ActivityDateTime desc").each # do |rs|
@@ -91,6 +96,10 @@ class NcrMapping::ApiResult
       member_account_id = member_account_id.first["vbofqMemberAccountID"]
 
       conditions << " HstvbofqAssignment.FKvbofqMemberAccountID = #{member_account_id}"
+    end
+
+    unless params["date"].blank?
+      conditions << " CONVERT(date,ActivityDateTime) = '#{params["date"]}' "
     end
 
 
