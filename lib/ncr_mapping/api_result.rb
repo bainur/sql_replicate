@@ -179,7 +179,8 @@ FKvbofqRewardProgramID  = #{bpid}").each
     a = NcrMapping::NcrDatabase.new
     a.connect_database
     @client = a.client
-    res = @client.execute("select NextRewardThreshold as bp_threshold ,MetricName,RewardProgramName, vbofqMemberAccountID,FKvbofqRewardProgramID,CommittedMerit from vbofqMemberAccount  inner join
+    res = @client.execute("select NextRewardThreshold as bp_threshold ,MetricName as bp_type,RewardProgramName
+   as bp_name, vbofqMemberAccountID,FKvbofqRewardProgramID as bpid, FKvbofqRewardProgramID as reward_program_id ,CommittedMerit as bp_credit from vbofqMemberAccount  inner join
  vbofqRewardProgramStandings on FKvbofqMemberAccountID= vbofqMemberAccountID
 INNER JOIN vbofqRewardProgram on FKvbofqRewardProgramID=vbofqRewardProgramID
 INNER JOIN vbofqMetric on vbofqMetricID = vbofqRewardProgram.FKvbofqMetricID
