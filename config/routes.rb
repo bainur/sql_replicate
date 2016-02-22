@@ -30,6 +30,7 @@ SqlReplicate::Application.routes.draw do
       match '/ncr_receipt' => 'data#ncr_receipt', :as => :ncr_receipt
       match '/ncr_reward_transaction' => 'data#ncr_reward_transaction', :as => :ncr_reward_transaction
       match '/get_points' => 'data#get_points', :as => :get_points
+      match '/bonus_plans' => 'data#bonus_plans', :as => :bonus_plans
     end
   end
 

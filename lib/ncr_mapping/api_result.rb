@@ -174,4 +174,17 @@ HstvbofqAssignment.Status = 4 AND RewardAmount <> 0
 FKvbofqRewardProgramID  = #{bpid}").each
     return m
   end
+
+  def self.get_bonus_plan(card_number)
+    a = NcrMapping::NcrDatabase.new
+    a.connect_database
+    @client = a.client
+    res = @client.execute("select NextRewardThreshold as bp_threshold ,MetricName,RewardProgramName, vbofqMemberAccountID,FKvbofqRewardProgramID,CommittedMerit from vbofqMemberAccount  inner join
+ vbofqRewardProgramStandings on FKvbofqMemberAccountID= vbofqMemberAccountID
+INNER JOIN vbofqRewardProgram on FKvbofqRewardProgramID=vbofqRewardProgramID
+INNER JOIN vbofqMetric on vbofqMetricID = vbofqRewardProgram.FKvbofqMetricID
+ where CardNumber = #{card_number}")
+
+    return res.to_json
+  end
 end

@@ -26,4 +26,9 @@ class Api::V1::DataController < ApplicationController
     result = NcrMapping::ApiResult.reward_transaction(row, params)
     render :json => result
   end
+
+  def bonus_plans
+   res =  NcrMapping::ApiResult.get_bonus_plan(params[:card_number])
+   render :json => res
+  end
 end
