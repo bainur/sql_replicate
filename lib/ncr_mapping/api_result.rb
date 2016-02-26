@@ -204,7 +204,7 @@ INNER JOIN vbofqMetric on vbofqMetricID = vbofqRewardProgram.FKvbofqMetricID
 
 
     new_query = "
-    select HstvbofqAssignment.DateOfBusiness as issue_date,DATEADD(day,vbofqRewardProgramTier.ExpireAfterXdays,HstvbofqAssignment.DateOfBusiness) as expiration_date, #{reward_program_id} as reward_program_id, TierName as tier_name,
+    select HstvbofqAssignment.DateOfBusiness as issue_date,DATEADD(day,vbofqRewardProgramTier.ExpireAfterXdays - 1,HstvbofqAssignment.DateOfBusiness) as expiration_date, #{reward_program_id} as reward_program_id, TierName as tier_name,
     vbofqQueuedRewardStandings.FKvbofqTierID as tier_id from vbofqQueuedRewardStandings
     INNER JOIN HstvbofqAssignment on
     HstvbofqAssignment.FKvbofqMemberAccountID = vbofqQueuedRewardStandings.FKvbofqMemberAccountID
