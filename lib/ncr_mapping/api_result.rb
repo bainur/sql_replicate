@@ -190,18 +190,37 @@ HstvbofqMemberAccount.FKUserID,
    inner join vbofqRewardProgramStandings on vbofqRewardProgramStandings.FKvbofqMemberAccountID= vbofqMemberAccountID
 INNER JOIN vbofqRewardProgram on FKvbofqRewardProgramID=vbofqRewardProgramID
 INNER JOIN vbofqMetric on vbofqMetricID = vbofqRewardProgram.FKvbofqMetricID
- where HstvbofqMemberAccount.CardNumber = #{card_number}")
+ where HstvbofqMemberAccount.CardNumber = #{card_number} order by bp_threshold asc")
 
     return res.to_a
   end
 
   def self.get_queued_reward(member_account_id, reward_program_id, tier_id)
+   #  a = NcrMapping::NcrDatabase.new
+   #  a.connect_database
+   #  @client = a.client
+   #  res = @client.execute("select * from vbofqQueuedRewardStandings
+   # where FKvbofqMemberAccountID = #{member_account_id} AND FKvbofqTierID = #{tier_id} AND FKvbofqRewardProgramID = #{reward_program_id}")
+
+
+    new_query = "
+    select HstvbofqAssignment.DateOfBusiness as issue_date,DATEADD(day,vbofqRewardProgramTier.ExpireAfterXdays,HstvbofqAssignment.DateOfBusiness) as expiration_date, #{reward_program_id} as reward_program_id, TierName as tier_name,
+    vbofqQueuedRewardStandings.FKvbofqTierID as tier_id from vbofqQueuedRewardStandings
+    INNER JOIN HstvbofqAssignment on
+    HstvbofqAssignment.FKvbofqMemberAccountID = vbofqQueuedRewardStandings.FKvbofqMemberAccountID
+    INNER JOIN HstvbofqAssignmentMerit ON
+    HstvbofqAssignmentMerit.FKHstvbofqAssignmentID = HstvbofqAssignment.HstvbofqAssignmentID
+    INNER JOIN vbofqRewardProgramTier ON
+    vbofqRewardProgramTier.FKHstvbofqRewardProgramID = HstvbofqAssignmentMerit.FKHstvbofqRewardProgramID and vbofqRewardProgramTier.FKvbofqTierID = #{tier_id}
+
+    where vbofqQueuedRewardStandings.FKvbofqMemberAccountID = #{member_account_id} AND vbofqQueuedRewardStandings.FKvbofqTierID = #{tier_id} AND
+    FKvbofqRewardProgramID = #{reward_program_id} AND
+    DATEADD(day,vbofqRewardProgramTier.ExpireAfterXdays,HstvbofqAssignment.DateOfBusiness)  > '#{Time.zone.now.strftime("%Y-%m-%d")}'"
+
     a = NcrMapping::NcrDatabase.new
     a.connect_database
     @client = a.client
-    res = @client.execute("select * from vbofqQueuedRewardStandings
-   where FKvbofqMemberAccountID = #{member_account_id} AND FKvbofqTierID = #{tier_id} AND FKvbofqRewardProgramID = #{reward_program_id}")
-
+    res = @client.execute(new_query)
     return res.to_a
   end
 
