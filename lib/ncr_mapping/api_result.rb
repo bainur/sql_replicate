@@ -179,13 +179,38 @@ FKvbofqRewardProgramID  = #{bpid}").each
     a = NcrMapping::NcrDatabase.new
     a.connect_database
     @client = a.client
-    res = @client.execute("select NextRewardThreshold as bp_threshold ,MetricName as bp_type,RewardProgramName
-   as bp_name, vbofqMemberAccountID,FKvbofqRewardProgramID as bpid, FKvbofqRewardProgramID as reward_program_id ,CommittedMerit as bp_credit from vbofqMemberAccount  inner join
- vbofqRewardProgramStandings on FKvbofqMemberAccountID= vbofqMemberAccountID
+    res = @client.execute("select
+HstvbofqMemberAccount.FKUserID,
+      vbofqRewardProgramStandings.FKHstvbofqRewardProgramID,
+      vbofqRewardProgramStandings.FKTierID as tier_id, vbofqMemberAccount.vbofqMemberAccountID as member_account_id, NextRewardThreshold as bp_threshold ,MetricName as bp_type,RewardProgramName
+   as bp_name, vbofqMemberAccountID,FKvbofqRewardProgramID as bpid, FKvbofqRewardProgramID as reward_program_id ,CommittedMerit as bp_credit,
+   vbofqRewardProgramStandings.Iteration as bp_life_time_reward_count
+   from vbofqMemberAccount
+   inner join HstvbofqMemberAccount on HstvbofqMemberAccount.FKvbofqMemberAccountID= vbofqMemberAccountID
+   inner join vbofqRewardProgramStandings on vbofqRewardProgramStandings.FKvbofqMemberAccountID= vbofqMemberAccountID
 INNER JOIN vbofqRewardProgram on FKvbofqRewardProgramID=vbofqRewardProgramID
 INNER JOIN vbofqMetric on vbofqMetricID = vbofqRewardProgram.FKvbofqMetricID
- where CardNumber = #{card_number}")
+ where HstvbofqMemberAccount.CardNumber = #{card_number}")
 
-    return res.to_json
+    return res.to_a
+  end
+
+  def self.get_queued_reward(member_account_id, reward_program_id, tier_id)
+    a = NcrMapping::NcrDatabase.new
+    a.connect_database
+    @client = a.client
+    res = @client.execute("select * from vbofqQueuedRewardStandings
+   where FKvbofqMemberAccountID = #{member_account_id} AND FKvbofqTierID = #{tier_id} AND FKvbofqRewardProgramID = #{reward_program_id}")
+
+    return res.to_a
+  end
+
+  def self.query(query)
+    a = NcrMapping::NcrDatabase.new
+    a.connect_database
+    @client = a.client
+    res = @client.execute(query)
+
+    return res.to_a
   end
 end
