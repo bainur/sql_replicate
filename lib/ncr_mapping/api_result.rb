@@ -179,18 +179,29 @@ FKvbofqRewardProgramID  = #{bpid}").each
     a = NcrMapping::NcrDatabase.new
     a.connect_database
     @client = a.client
-    res = @client.execute("select
+    q = "select
 HstvbofqMemberAccount.FKUserID,
       vbofqRewardProgramStandings.FKHstvbofqRewardProgramID,
       vbofqRewardProgramStandings.FKTierID as tier_id, vbofqMemberAccount.vbofqMemberAccountID as member_account_id, NextRewardThreshold as bp_threshold ,MetricName as bp_type,RewardProgramName
-   as bp_name, vbofqMemberAccountID,FKvbofqRewardProgramID as bpid, FKvbofqRewardProgramID as reward_program_id ,CommittedMerit as bp_credit,
+   as bp_name, vbofqMemberAccountID,vbofqRewardProgramStandings.FKvbofqRewardProgramID as bpid, vbofqRewardProgramStandings.FKvbofqRewardProgramID as reward_program_id ,CommittedMerit as bp_credit,
    vbofqRewardProgramStandings.Iteration as bp_life_time_reward_count
    from vbofqMemberAccount
    inner join HstvbofqMemberAccount on HstvbofqMemberAccount.FKvbofqMemberAccountID= vbofqMemberAccountID
-   inner join vbofqRewardProgramStandings on vbofqRewardProgramStandings.FKvbofqMemberAccountID= vbofqMemberAccountID
-INNER JOIN vbofqRewardProgram on FKvbofqRewardProgramID=vbofqRewardProgramID
-INNER JOIN vbofqMetric on vbofqMetricID = vbofqRewardProgram.FKvbofqMetricID
- where HstvbofqMemberAccount.CardNumber = #{card_number} order by bp_threshold asc")
+   left join vbofqRewardProgramStandings on vbofqRewardProgramStandings.FKvbofqMemberAccountID= vbofqMemberAccountID
+left join HstvbofqRewardProgram on HstvbofqRewardProgram.HstvbofqRewardProgramID = vbofqRewardProgramStandings.FKHstvbofqRewardProgramID
+left JOIN
+(select vbofqRewardProgram.* from  HstvbofqSeriesRewardProgram
+  LEFT join vbofqRewardProgram on vbofqRewardProgram.vbofqRewardProgramID = HstvbofqSeriesRewardProgram.FKvbofqRewardProgramID
+  LEFT join HstvbofqSeries on HstvbofqSeries.HstvbofqSeriesID = HstvbofqSeriesRewardProgram.FKHstvbofqSeriesID
+  LEFT join vbofqSeries on vbofqSeries.vbofqSeriesID = HstvbofqSeries.FKvbofqSeriesID
+  where HstvbofqSeries.HstvbofqSeriesID = (select TOP 1 HstvbofqSeriesID from vbofqSeries vb inner join HstvbofqSeries hs on hs.FKvbofqSeriesID = vb.vbofqSeriesID where  vbofqSeries.vbofqSeriesID = 2
+ order by VersionIndex desc))  a
+ on vbofqRewardProgramStandings.FKvbofqRewardProgramID = a.vbofqRewardProgramID
+left JOIN vbofqMetric on vbofqMetricID = a.FKvbofqMetricID
+ where vbofqMemberAccount.CardNumber = #{card_number} AND  NextRewardThreshold != 0 order by bp_threshold asc"
+    puts q
+
+    res = @client.execute(q)
 
     return res.to_a
   end
