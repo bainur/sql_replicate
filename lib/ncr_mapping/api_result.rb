@@ -115,8 +115,10 @@ class NcrMapping::ApiResult
     conditions =  conditions if !conditions.include?("AND") and conditions.present?
     limit_row = 10
     puts "a"
-    q = ["select TOP #{limit_row} * from HstvbofqAssignmentReward  INNER JOIN HstvbofqAssignment
-      ON HstvbofqAssignmentID = HstvbofqAssignmentReward.FKHstvbofqAssignmentID where Proposed = 'true' AND
+    q = ["select TOP #{limit_row} HstvbofqAssignmentReward.* , SecondaryStoreID as store_id_or_external_id from HstvbofqAssignmentReward  INNER JOIN HstvbofqAssignment
+      ON HstvbofqAssignmentID = HstvbofqAssignmentReward.FKHstvbofqAssignmentID
+INNER JOIN gblStore on StoreId = FKStoreID
+where Proposed = 'true' AND
 HstvbofqAssignment.Status = 4 AND RewardAmount <> 0
     "]
     q << conditions unless conditions.blank?
